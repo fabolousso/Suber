@@ -322,7 +322,6 @@ jobs:
             cd .circleci/ansible
             pwd
             cat inventory.txt
-            cat project/.circleci/ansible/inventory.txt
       - run:
           name: Configure server
           command: |
