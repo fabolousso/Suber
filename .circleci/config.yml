@@ -348,8 +348,7 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: python:3.7-alpine3.11
-      # - image: amazon/aws-cli
+      - image: circleci/node:13.8.0
     steps:
         - checkout 
         - run:
@@ -385,21 +384,37 @@ jobs:
         #- destroy_environment
         #- revert-migrations      
                     
-  #deploy-backend:
-    #docker:
-      # Docker image here that supports Ansible
-    #steps:
+  deploy-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
       # Checkout code from git
-      # Add ssh keys with fingerprint
-      # attach workspace
-      #- run:
-          #name: Install dependencies
-          #command: |
-            # your code here
-      #- run:
-          #name: Deploy backend
-          #command: |
-            # your code here
+      - checkout
+      #Fingerprints
+      - add_ssh_keys:
+            fingerprints: ["b0:dc:47:24:b2:13:0d:85:32:1f:f6:48:70:89:8c:60"]
+      - run:
+            name: Install dependencies
+            command: |             
+              yum update -y
+              yum install tar -y
+              yum install gzip -y
+              yum install curl -y
+              yum install awscli -y
+              yum install python ansible -y
+              #curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+              # . ~/.nvm/nvm.sh
+              # nvm install node
+              # nvm install npm
+              cd ..
+      - run:
+          name: Deploy backend
+          command: |
+            # your code here - do it
+            
+      - attach_workspace:
+            at: /root/project/
+      #Here's where you will add some code to rollback on failure
       # Here's where you will add some code to rollback on failure  
 
   #smoke-test:
@@ -483,10 +498,10 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
-      #- deploy-frontend:
-          #requires: [run-migrations]
-      #- deploy-backend:
-          #requires: [run-migrations]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
       #- smoke-test:
           #requires: [deploy-backend, deploy-frontend]
       #- cloudfront-update:
