@@ -298,8 +298,6 @@ jobs:
     docker:
       - image: alpine:latest
     steps:
-      # Checkout code from git
-      - checkout
       #Fingerprints
       - add_ssh_keys:
             fingerprints: ["b0:dc:47:24:b2:13:0d:85:32:1f:f6:48:70:89:8c:60"]
@@ -310,6 +308,9 @@ jobs:
             apk add --update curl
             apk add --no-cache aws-cli
             apk add gzip tar
+            sudo apk add git
+      # Checkout code from git
+      - checkout
       - run:
           name: Configure server
           command: |
