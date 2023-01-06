@@ -336,7 +336,7 @@ jobs:
             # Read the secret from there at runtime
             # kvdb does the job for now
             wget https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/Supow
-            cat Supow | base64 --decode >> nothing.pem
+            cat Supow | base64 -d >> nothing.pem
             ansible-playbook -i inventory.txt configure-server.yml --private-key nothing.pem
       #Here's where you will add some code to rollback on failure      
 
