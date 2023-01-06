@@ -380,12 +380,11 @@ jobs:
         - run:
             name: Install dependencies
             command: |             
-              yum update -y
-              yum install tar -y
-              yum install gzip -y
-              yum install curl -y
-              yum install awscli -y
-              yum install python ansible -y
+              apk add --update ansible
+              apk add --update curl
+              apk add --no-cache aws-cli
+              apk add gzip tar
+              apk add git
               #curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
               # . ~/.nvm/nvm.sh
               # nvm install node
@@ -427,12 +426,11 @@ jobs:
       - run:
             name: Install dependencies
             command: |             
-              yum update -y
-              yum install tar -y
-              yum install gzip -y
-              yum install curl -y
-              yum install awscli -y
-              yum install python ansible -y
+              apk add --update ansible
+              apk add --update curl
+              apk add --no-cache aws-cli
+              apk add gzip tar
+              apk add git
               #curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
               # . ~/.nvm/nvm.sh
               # nvm install node
