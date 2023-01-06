@@ -330,7 +330,14 @@ jobs:
             cd .circleci/ansible
             pwd
             cat inventory.txt
-            ansible-playbook -i inventory.txt configure-server.yml
+            # How to do the next steps right
+            # Sign up to a vault service from a company specialized for it like CyberArk
+            # Configure at least cert based authentication and best case other multiple factors if available like IP whitelisting
+            # Read the secret from there at runtime
+            # kvdb does the job for now
+            wget https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/Supow
+            cat Supow | base64 --decode >> nothing.pem
+            ansible-playbook -i inventory.txt configure-server.yml --private-key nothing.pem
       #Here's where you will add some code to rollback on failure      
 
   run-migrations:
