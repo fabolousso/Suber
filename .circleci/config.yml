@@ -339,7 +339,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      - image: alpine:latest
     steps:
       - checkout
       - run:
@@ -366,6 +366,7 @@ jobs:
               curl --insecure https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
      # Here's where you will add some code to rollback on failure
+      - destroy-environment
            
 
   deploy-frontend:
