@@ -7,6 +7,7 @@
 # Trigger
 # Trigger
 # Trigger 
+# Trigger
 version: 2.1
 
 orbs:
@@ -498,8 +499,8 @@ workflows:
           requires: [build-frontend]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      #- run-migrations:
-          #requires: [configure-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       #- deploy-frontend:
           #requires: [run-migrations]
       #- deploy-backend:
