@@ -374,6 +374,9 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
         - checkout 
+        #Attach workspace
+        - attach_workspace:
+            at: ~/
         - run:
             name: Install dependencies
             command: |             
@@ -415,9 +418,9 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      #Attach the workspace
+      #Attach workspace
       - attach_workspace:
-            at: /root/project/
+          at: ~/
       #Fingerprints
       - add_ssh_keys:
             fingerprints: ["b0:dc:47:24:b2:13:0d:85:32:1f:f6:48:70:89:8c:60"]
