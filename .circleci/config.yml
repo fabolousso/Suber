@@ -296,8 +296,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
-      # - image: amazon/aws-cli
+      - image: alpine:latest
     steps:
       # Checkout code from git
       - checkout
@@ -307,28 +306,10 @@ jobs:
       - run:
           name: Install dependencies with APK
           command: |
-            apk update && \
-            apk add --update ansible \
-            && apk add gzip tar
-      - run:
-          name: Install dependencies with Yum
-          command: |
-            # Let's install some dependecies first
-            yum -y install tar gzip
-      - run:
-          name: Install dependencies with Yum
-          command: |             
-            yum update -y
-            yum install tar -y
-            yum install gzip -y
-            yum install curl -y
-            yum install awscli -y
-            yum install python ansible -y
-            # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-            # . ~/.nvm/nvm.sh
-            # nvm install node
-            # nvm install npm
-            cd ..
+            apk add --update ansible
+            apk add --update curl
+            apk add --no-cache aws-cli
+            apk add gzip tar
       - run:
           name: Configure server
           command: |
