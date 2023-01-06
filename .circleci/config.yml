@@ -279,6 +279,12 @@ jobs:
           name: Add back-end IP to ansible inventory
           command: |
             # Your code here
+            hostname
+            pwd
+            cd .circleci/ansible
+            pwd
+            cat inventory.txt
+            cat project/.circleci/ansible/inventory.txt
             IPS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text) 
             echo "$IPS" >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
@@ -311,18 +317,27 @@ jobs:
             fingerprints: ["b0:dc:47:24:b2:13:0d:85:32:1f:f6:48:70:89:8c:60"]
       # Checkout code from git
       - checkout
+      #Attach workspace
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Some output to understand better
+          command:  |
+            hostname
+            pwd
+            cd .circleci/ansible
+            pwd
+            cat inventory.txt
+            cat project/.circleci/ansible/inventory.txt
       - run:
           name: Configure server
           command: |
-            echo hostname
+            hostname
             pwd
             cd .circleci/ansible
             pwd
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
-      #Attach workspace
-      - attach_workspace:
-            at: /root/project/
       #Here's where you will add some code to rollback on failure      
 
   run-migrations:
