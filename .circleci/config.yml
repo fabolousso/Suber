@@ -392,7 +392,7 @@ jobs:
               echo API_URL="http://${BACKEND_IP}:3030"
               echo "http://${BACKEND_IP}:3030" > disp.txt
               #ls -l
-              curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/nkt8mc5cug7egday8y -d ${BACKEND_IP}
+              #curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/nkt8mc5cug7egday8y -d ${BACKEND_IP}
               curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/jznnbdbtiqirzxwjvp -d "http://${BACKEND_IP}:3030"
               cat disp.txt
               #npm install
