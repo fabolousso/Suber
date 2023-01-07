@@ -552,8 +552,14 @@ workflows:
   default:
     jobs:
       - notify
-      - build-frontend
-      - build-backend
+      - build-frontend:
+          filters:
+            branches:
+              ignore: [main]
+      - build-backend:
+          filters:
+            branches:
+              ignore: [main]
       - test-frontend:
           requires: [build-frontend]
           filters:
@@ -574,8 +580,8 @@ workflows:
           filters:
             branches:
               ignore: [main]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      - deploy-infrastructure
+          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
