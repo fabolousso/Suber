@@ -491,6 +491,7 @@ jobs:
       #Here's where you will add some code to rollback on failure
       - destroy-environment 
 
+<<<<<<< HEAD
   cloudfront-update:
     docker:
       - image: alpine:latest
@@ -510,6 +511,48 @@ jobs:
       - run:
           name: Update cloudfront distribution
           command: |
+=======
+  #smoke-test:
+    #docker:
+      # Lightweight Docker image 
+    #steps:
+      # Checkout code from git
+      #- run:
+          #name: Install dependencies
+          #command: |
+            # your code here
+      #- run:
+          #name: Get backend url
+          #command: |
+            # your code here
+      #- run:
+          #name: Backend smoke test.
+          #command: |
+            # your code here
+      #- run:
+          #name: Frontend smoke test.
+          #command: |
+            # your code here
+      # Here's where you will add some code to rollback on failure  
+
+  cloudfront-update:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+        - checkout 
+        - run:
+            name: Install dependencies
+            command: |             
+              yum update -y
+              yum install tar -y
+              yum install gzip -y
+              yum install curl -y
+              yum install awscli -y
+              yum install python ansible -y
+        - run:
+            name: Update cloudfront distribution
+            command: |
+>>>>>>> 69b346a (14:02)
               # Change the initial stack name, as applicable to you
               aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
@@ -565,8 +608,13 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
+<<<<<<< HEAD
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
+=======
+      #- smoke-test:
+          #requires: [deploy-backend, deploy-frontend]
+>>>>>>> 69b346a (14:02)
       - cloudfront-update
           #requires: [smoke-test]
       #- cleanup:
