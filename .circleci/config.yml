@@ -385,21 +385,21 @@ jobs:
             name: Get backend url
             command: |
               cd frontend
-              pwd
+              #pwd
               export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text)
               export API_URL="http://${BACKEND_IP}:3030"
               echo "API_URL = ${API_URL}"
               echo API_URL="http://${BACKEND_IP}:3030"
               echo "http://${BACKEND_IP}:3030" >> disp.txt
-              ls -l
+              #ls -l
               curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/nkt8mc5cug7egday8y -d '${BACKEND_IP}'
               curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/jznnbdbtiqirzxwjvp -d '${API_URL}'
               cat disp.txt
               #npm install
               #npm run build
-              pwd
-              ls -l
-              sudo tar -czfv artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz disp.txt
+              #pwd
+              #ls -l
+              #sudo tar -czfv artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz disp.txt
               aws s3 cp disp.txt s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
         - destroy-environment
         #- revert-migrations     
