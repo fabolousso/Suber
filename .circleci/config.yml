@@ -397,7 +397,6 @@ jobs:
               cat disp.txt
               #npm install
               #npm run build
-              apk add gzip tar
               tar -czvf "artifact-${CIRCLE_WORKFLOW_ID:0:7}".tar.gz disp.txt
               aws s3 cp disp.txt s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
         - destroy-environment
