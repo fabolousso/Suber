@@ -338,36 +338,24 @@ jobs:
 
   run-migrations:
     docker:
-      - image: alpine:latest
+      - image: circleci/node:12.16.3
     steps:
       - checkout
       - run:
-          name: Install dependencies with APK
+          name: Run migrations
           command: |
-            apk add --update ansible
-            apk add --update curl
-            apk add --no-cache aws-cli
-            apk add gzip tar
-            apk add git
-      #Fingerprints
-      - add_ssh_keys:
-            fingerprints: ["b0:dc:47:24:b2:13:0d:85:32:1f:f6:48:70:89:8c:60"]
+            cd backend
+            npm install
+            npm run migrations > migrations_dump.txt
       - run:
-          name: Send migration results to memstash
+          name: Send migration results to kvdb
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              # If you are using memstash.io, generate the token "7933fe63-4687-4fa1-8426-aa25aa1730ec" on the website
-              #curl -H "Content-Type: text/plain" -H "token: 7933fe63-4687-4fa1-8426-aa25aa1730ec" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
-              # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
-              echo "https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/migration_${CIRCLE_WORKFLOW_ID:0:7}"
-              curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
-              #For development only
-              curl --insecure https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/migration_${CIRCLE_WORKFLOW_ID:0:7}
+              curl "https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/migration${CIRCLE_WORKFLOW_ID:0:7}"  -d '1'
             fi
-     # Here's where you will add some code to rollback on failure
-      - destroy-environment
-      - revert-migrations
+            echo curl --insecure "https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/migration${CIRCLE_WORKFLOW_ID:0:7}"
+      - revert-migrations              
            
   deploy-frontend:
     docker:
@@ -476,12 +464,7 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-              export BACKEND_IP=$(
-              aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output=text
-              )
+              export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output=text)
               export API_URL="http://${BACKEND_IP}:3030"
               echo "api url -> ${API_URL}"
               if curl "${API_URL}/api/status" | grep "ok"
@@ -530,24 +513,34 @@ jobs:
               --tags project=udapeople
       #Here's where you will add some code to rollback on failure  
 
-#cleanup:
-    #docker:
-      # Docker image here
-    #steps:
-      # Checkout code from git
-      #- run:
-          #name: Get old stack workflow id
-          #command: |
-            # your code here
-            #export OldWorkflowID="the id here"
-            #export STACKS=[] #put the list of stacks here
-      #- run:
-          #name: Remove old stacks and files
-          #command: |
-            #if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-            #then
-              # your code here
-            #fi
+cleanup:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Install tar utility dependencies
+          command: |
+            yum install -y tar gzip
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Delete stacks and files
+          command: |
+            cat OldWorkflowID.txt
+            OldWorkflowID=$(cat OldWorkflowID.txt)
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+            --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+            echo Stack names: "${STACKS[@]}"
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            then
+              echo "----------------- Delete Confirmed -------------------"
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+            fi
             
 workflows:
   default:
