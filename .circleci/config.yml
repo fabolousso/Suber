@@ -391,8 +391,8 @@ jobs:
               export API_URL="http://${BACKEND_IP}:3030"
               echo "API_URL = ${API_URL}"
               echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-              curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/nkt8mc5cug7egday8y -d "${BACKEND_IP}"
-              curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/jznnbdbtiqirzxwjvp -d "${API_URL}"
+              curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/nkt8mc5cug7egday8y -d '${BACKEND_IP}'
+              curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/jznnbdbtiqirzxwjvp -d '${API_URL}'
               cat frontend/.env
               #npm install
               #npm run build
