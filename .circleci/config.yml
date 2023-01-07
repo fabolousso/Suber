@@ -360,9 +360,11 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl "https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/migration${CIRCLE_WORKFLOW_ID:0:7}"  -d '1'
+              curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/migration-${CIRCLE_WORKFLOW_ID:0:7}  -d '0'
+            else
+              curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/migration-${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
-            echo curl --insecure "https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/migration${CIRCLE_WORKFLOW_ID:0:7}"
+            echo curl --insecure "https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/migration-${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations              
            
   deploy-frontend:
@@ -474,7 +476,7 @@ jobs:
           command: |
               export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output=text)
               export API_URL="http://${BACKEND_IP}:3030"
-              echo "api url -> ${API_URL}"
+              echo "api url -> "${API_URL}/api/status"
               if curl "${API_URL}/api/status" | grep "ok"
               then
                   return 0
@@ -492,7 +494,7 @@ jobs:
             else
               return 1
             fi
-      - destroy-environment 
+      # - destroy-environment 
 
   cloudfront-update:
     docker:
