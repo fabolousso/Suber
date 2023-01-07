@@ -21,10 +21,10 @@
       raw: (apt -y update && apt install -y ansible)
       changed_when: false
 
-    - name: "Install nodejs, npm, and pm2."
-      become: true
-      raw: (apt -y update && apt install -y nodejs) || (apt -y update && apt install -y npm) || (apt -y update && apt install -y pm2)
-      changed_when: false
+    # - name: "Install nodejs, npm, and pm2."
+    #   become: true
+    #   raw: (apt -y update && apt install -y nodejs) || (apt -y update && apt install -y npm) || (apt -y update && apt install -y pm2)
+    #   changed_when: false
 
     - name: "Node exporter"
       become: true
