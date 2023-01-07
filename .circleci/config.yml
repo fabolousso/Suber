@@ -69,6 +69,30 @@ jobs:
               ]
             }
           event: always
+
+  notifyfordev:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - print_pipeline_id
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "***This is a text notification that the **notifyfordev**-job was triggered by a commit to the dev branch. This notification should be visible in Slack as workflow ${CIRCLE_WORKFLOW_ID} ${CIRCLE_WORKFLOW_ID:0:7} started***",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: always
+
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -554,7 +578,14 @@ jobs:
 workflows:
   default:
     jobs:
-      - notify
+      - notify:
+          filters:
+            branches:
+              ignore: [dev]
+      - notifyfordev:
+          filters:
+            branches:
+              only: [dev]
       - build-frontend:
           filters:
             branches:
