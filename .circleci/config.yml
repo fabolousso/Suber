@@ -1,6 +1,7 @@
 # Trigger
 # Trigger
 # Trigger
+# Trigger
 version: 2.1
 
 orbs:
@@ -390,15 +391,15 @@ jobs:
               export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text)
               export API_URL="http://${BACKEND_IP}:3030"
               echo "API_URL = ${API_URL}"
-              echo API_URL="http://${BACKEND_IP}:3030" >> .env
+              echo API_URL="http://${BACKEND_IP}:3030" >> disp.txt
               curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/nkt8mc5cug7egday8y -d '${BACKEND_IP}'
               curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/jznnbdbtiqirzxwjvp -d '${API_URL}'
-              cat .env
+              cat disp.txt
               #npm install
               #npm run build
               apk add gzip tar
-              tar -czvf "artifact-${CIRCLE_WORKFLOW_ID:0:7}".tar.gz .env
-              aws s3 cp .env s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+              tar -czvf "artifact-${CIRCLE_WORKFLOW_ID:0:7}".tar.gz disp.txt
+              aws s3 cp disp.txt s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
         - destroy-environment
         #- revert-migrations     
                     
