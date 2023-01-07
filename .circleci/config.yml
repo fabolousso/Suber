@@ -349,8 +349,9 @@ jobs:
           name:  npm install && cd migrations 
           command: |
             cd backend 
-            npm audit fix
-            npm install
+            npm install --include=peer
+            npm install oauth-sign@^0.9.0
+            npm audit fix --audit-level=none --force
             npm run migrations > migrations_dump.txt  
             cat migrations_dump.txt   
       - run:
@@ -566,7 +567,7 @@ workflows:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
            branches:
-              only: [feature]
+              only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
