@@ -383,20 +383,17 @@ jobs:
               # nvm install node
               # nvm install npm
               cd ..
-        # - run:
-        #     name: Get backend url
-        #     command: |
-        #       export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text)
-        #       export API_URL="http://${BACKEND_IP}:3030"
-        #       echo "API_URL = ${API_URL}"
-        #       echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-        #       curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/nkt8mc5cug7egday8y -d ${BACKEND_IP}
-        #       curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/jznnbdbtiqirzxwjvp -d ${API_URL}
-        #       cat frontend/.env
         - run:
-            name: Deploy frontend objects
+            name: Get backend url
             command: |
               cd frontend
+              export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text)
+              export API_URL="http://${BACKEND_IP}:3030"
+              echo "API_URL = ${API_URL}"
+              echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+              curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/nkt8mc5cug7egday8y -d "${BACKEND_IP}"
+              curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/jznnbdbtiqirzxwjvp -d "${API_URL}"
+              cat frontend/.env
               #npm install
               #npm run build
               apk add gzip tar
@@ -570,7 +567,7 @@ workflows:
           requires: [run-migrations]
       # - smoke-test
       #     requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update
+      #- cloudfront-update
           # requires: [smoke-test]
       #- cleanup:
           #requires: [cloudfront-update]
