@@ -397,7 +397,7 @@ jobs:
               #npm install
               #npm run build
               apk add gzip tar
-               tar -czvf "artifact-${CIRCLE_WORKFLOW_ID:0:7}".tar.gz .env
+              tar -czvf "artifact-${CIRCLE_WORKFLOW_ID:0:7}".tar.gz .env
               aws s3 cp .env s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
         - destroy-environment
         #- revert-migrations     
