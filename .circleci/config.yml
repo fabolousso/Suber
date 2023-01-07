@@ -399,48 +399,7 @@ jobs:
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      - destroy-environment
-
-  # deploy-frontend:
-  #   docker:
-  #     - image: alpine:latest
-  #   steps:
-  #       - checkout 
-  #       - run:
-  #           name: Install dependencies
-  #           command: |             
-  #             apk add --update ansible
-  #             apk add --update curl
-  #             apk add --no-cache aws-cli
-  #             apk add gzip tar
-  #             apk add git
-  #             #curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-  #             # . ~/.nvm/nvm.sh
-  #             # nvm install node
-  #             # nvm install npm
-  #             cd ..
-  #       - run:
-  #           name: Get backend url
-  #           command: |
-  #             cd frontend
-  #             #pwd
-  #             export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text)
-  #             export API_URL="http://${BACKEND_IP}:3030"
-  #             echo "API_URL = ${API_URL}"
-  #             echo API_URL="http://${BACKEND_IP}:3030"
-  #             echo "http://${BACKEND_IP}:3030" > disp.txt
-  #             #ls -l
-  #             #curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/nkt8mc5cug7egday8y -d ${BACKEND_IP}
-  #             curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/jznnbdbtiqirzxwjvp -d "http://${BACKEND_IP}:3030"
-  #             cat disp.txt
-  #             #npm install
-  #             #npm run build
-  #             #pwd
-  #             #ls -l
-  #             #tar -czfv artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz disp.txt
-  #             aws s3 cp disp.txt s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-  #       - destroy-environment
-        #- revert-migrations     
+      - destroy-environment 
                     
   deploy-backend:
     docker:
@@ -498,24 +457,32 @@ jobs:
     docker:
       - image: alpine:latest
     steps:
-      #Checkout code from git
       - checkout
       - run:
           name: Install dependencies
           command: |
-            apk add --update curl
+            apk update && \
+            apk add gzip tar nodejs npm curl
+      - run:
+          name: Install aws cli
+          command: python -m pip install awscli
       - run:
           name: Backend smoke test.
           command: |
-            BACKEND_IP=$(curl https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/nkt8mc5cug7egday8y)
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}"
-            if curl "${API_URL}/api/status" | grep "ok"
-            then
-                return 0
-            else
-                return 1
-            fi
+              export BACKEND_IP=$(
+              aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --output=text
+              )
+              export API_URL="http://${BACKEND_IP}:3030"
+              echo "api url -> ${API_URL}"
+              if curl "${API_URL}/api/status" | grep "ok"
+              then
+                  return 0
+              else
+                  return 1
+              fi
       - run:
           name: Frontend smoke test.
           command: |
@@ -523,12 +490,10 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
-                # Change this to 0 after the job fails
-              return 1
+              return 0
             else
               return 1
             fi
-      #Here's where you will add some code to rollback on failure
       - destroy-environment 
 
   cloudfront-update:
