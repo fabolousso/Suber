@@ -542,7 +542,6 @@ jobs:
               # your code here
             #fi
             
-
 workflows:
   default:
     jobs:
@@ -557,25 +556,29 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
-      - deploy-infrastructure
-          #requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          #filters:
-           #branches:
-              #only: [test-feature-branch]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+           branches:
+              only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      # - smoke-test
-      #     requires: [deploy-backend, deploy-frontend]
-      #- cloudfront-update
-          # requires: [smoke-test]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
       #- cleanup:
           #requires: [cloudfront-update]
 
 # VS Code Extension Version: 1.5.1
-#Closing Comment
+# Intended kvdb.io storage strings from previously further above
+# Backend IP:
+# https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/nkt8mc5cug7egday8y
+# API:
+# https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/jznnbdbtiqirzxwjvp
