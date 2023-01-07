@@ -349,6 +349,7 @@ jobs:
           name:  npm install && cd migrations 
           command: |
             cd backend 
+            npm audit fix
             npm install
             npm run migrations > migrations_dump.txt  
             cat migrations_dump.txt   
