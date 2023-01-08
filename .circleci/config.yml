@@ -359,7 +359,11 @@ jobs:
             wget https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/Supow
             cat Supow | base64 -d >> nothing.pem
             ansible-playbook -i inventory.txt configure-server.yml --private-key nothing.pem
-      #Here's where you will add some code to rollback on failure      
+      #Here's where you will add some code to rollback on failure
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt      
 
   run-migrations:
     docker:
@@ -397,6 +401,14 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
+          name: Some output to understand better
+          command:  |
+            hostname
+            pwd
+            cd .circleci/ansible
+            pwd
+            cat inventory.txt
+      - run:
           name: Install project dep
           command: |
             apk update && \
@@ -408,12 +420,7 @@ jobs:
           name: Get backend url
           command: |
             export BACKEND_IP=$(
-              aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:project,Values=udapeople-backend" \
-              "Name=tag:run,Values=${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output=text
-            ) 
+            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress'  --filters "Name=tag:project,Values=udapeople-backend" "Name=tag:run,Values=${CIRCLE_WORKFLOW_ID:0:7}" --output=text) 
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
@@ -440,6 +447,14 @@ jobs:
       #Fingerprints
       - add_ssh_keys:
             fingerprints: ["b0:dc:47:24:b2:13:0d:85:32:1f:f6:48:70:89:8c:60"]
+      - run:
+          name: Some output to understand better
+          command:  |
+            hostname
+            pwd
+            cd .circleci/ansible
+            pwd
+            cat inventory.txt
       - run:
             name: Install dependencies
             command: |  
