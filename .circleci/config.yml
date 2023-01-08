@@ -629,7 +629,7 @@ jobs:
                 if [ $delflag == "yes" ]; then
                     echo "delete;$val"
                     #Delete bucket
-                    aws s3 rm --recursive s3://udapeople-$current || echo "No deletion triggered"
+                    #aws s3 rm --recursive s3://udapeople-$current || echo "No deletion triggered"
                 else
                     echo "keep;$val"
                 fi
