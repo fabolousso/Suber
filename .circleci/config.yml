@@ -463,11 +463,13 @@ jobs:
               #npm run build
               cd ..
               # Zip the directory
+              pwd
               tar -C backend -czvf artifact.tar.gz .
+              ls -l
               cd .circleci/ansible
               echo " --------- Echoing inventory ----------"
               IPS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text) 
-              echo "$IPS" >> inventory.txt
+              echo "$IPS" > inventory.txt
               echo " --------------- END ------------------"
               #
               echo " --------- Echoing path and contents of the current directory ----------"
@@ -682,20 +684,20 @@ workflows:
           filters:
             branches:
               ignore: [main]
-      - deploy-infrastructure
-          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [deploy-backend, deploy-frontend]
-      - deploy-frontend:
-          requires: [deploy-backend]
-      - deploy-backend:
-          requires: [configure-infrastructure]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
+      # - deploy-infrastructure
+      #     # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     requires: [deploy-backend, deploy-frontend]
+      # - deploy-frontend:
+      #     requires: [deploy-backend]
+      - deploy-backend
+          # requires: [configure-infrastructure]
+      # - smoke-test:
+      #     requires: [deploy-backend, deploy-frontend]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
 
 # VS Code Extension Version: 1.5.1
 # Intended kvdb.io storage strings from previously further above
