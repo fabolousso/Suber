@@ -461,12 +461,15 @@ jobs:
               # Zip the directory
               tar -C backend -czvf artifact.tar.gz .
               cd .circleci/ansible
-              echo "Contents of the inventory.txt file is -------"
+              echo " --------- Showing inventory ----------"
+              IPS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text) 
+              echo "$IPS" >> .circleci/ansible/inventory.txt
+              cat .circleci/ansible/inventory.txt
               cat inventory.txt
               #
               echo " --------- showing contents of the root directory ----------"
               ls
-              mkdir .circleci/ansible/roles/deploy/files
+              mkdir /roles/deploy/files
               mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
               # How to do the next steps right
               # Sign up to a vault service from a company specialized for it like CyberArk so you hopefully don't need to rotate passwords too often
