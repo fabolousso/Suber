@@ -559,16 +559,44 @@ jobs:
       - run:
           name: Delete stacks
           command: |
-            for val in $(aws cloudformation list-stacks |grep StackName |awk {' print $2'}| awk '{print substr($0,2,length($0)-3)}')
-                if [[$val != 'udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}']]; then
-                    if [[$val != 'udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}']]; then
-                        if [[$val != 'InitialStack']]; then
-                            $(aws cloudformation delete-stack --stack-name $val)
-                        fi
-                    fi
+            #! /bin/bash
+            current=${CIRCLE_WORKFLOW_ID:0:7}
+            echo "----------------------------------------------------------------"
+            echo "-------------------------STACK LIST-----------------------------"
+            aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE DELETE_FAILED|grep StackName |awk {' print $2'}| awk '{print substr($0,2,length($0)-3)}' > stacklist.txt
+            cat stacklist.txt
+            echo "----------------------------------------------------------------"
+            printf "\n"
+            echo "----------------------------------------------------------------"
+            echo "-------------------------ACTIONS--------------------------------"
+            for val in $(cat stacklist.txt)
+            do
+                delflag="yes"
+                #Check if it is current frontend
+                if [ $val == "udapeople-frontend-$current" ]; then  
+                    delflag="no"
+                fi
+
+                #Check if it is currenet backend
+                if [ $val == "udapeople-backend-$current" ]; then
+                    delflag="no"
+                fi
+
+                #Check if it is InitialStack
+                if [ $val == "InitialStack" ]; then
+                    delflag="no"
+                fi
+
+                if [ $delflag == "yes" ]; then
+                    echo "delete;$val"
+                    #Delete stack
+                    aws cloudformation delete-stack --stack-name $val #--retain-resources "udapeople-$current"
+                else
+                    echo "keep;$val"
                 fi
             done
-            
+            echo "----------------------------------------------------------------"
+                        
 workflows:
   default:
     jobs:
