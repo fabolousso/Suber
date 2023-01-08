@@ -650,6 +650,7 @@ jobs:
                 if [ $delflag == "yes" ]; then
                     echo "delete;$val"
                     #Delete bucket
+                    #Command commented for time saving pruposes
                     #aws s3 rm --recursive s3://udapeople-$current || echo "No deletion triggered"
                 else
                     echo "keep;$val"
@@ -665,7 +666,7 @@ workflows:
             branches:
               ignore: [dev]
       # - deploy-backend
-      #- cleanup
+      - cleanup
       # - notifyfordev:
       #     filters:
       #       branches:
