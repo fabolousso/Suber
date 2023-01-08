@@ -445,8 +445,10 @@ jobs:
             command: |  
               echo " --------- Echoing path and contents of the current directory ----------"
               pwd
-              ls
+              echo " ---------""
+              ls -l
               echo " --------------- END ------------------"
+              echo "\n"
               apk add --update ansible curl rsync openssh nodejs npm           
               apk add --update ansible
               apk add --update curl
@@ -457,15 +459,26 @@ jobs:
               # . ~/.nvm/nvm.sh
               # nvm install node
               # nvm install npm
+              echo " --------- Echoing path and contents of the current directory ----------"
+              pwd
+              echo " ---------""
               ls -l
+              echo " --------------- END ------------------"
               cd backend
               #npm i
               #npm run build
               cd ..
               # Zip the directory
               echo "Before zipping, next line pwd"
+              echo " --------- Echoing path and contents of the current directory ----------"
               pwd
+              echo " ---------""
+              ls -l
+              echo " --------------- END ------------------"
+              cd backend
               tar -C backend -czvf artifact.tar.gz .
+              mkdir -p /root/project/.circleci/ansible/roles/deploy/files
+              mv artifact.tar.gz /root/project/.circleci/ansible/roles/deploy/files/artifact.tar.gz
               echo "After tar command"
               ls -l
               cd .circleci/ansible
@@ -479,8 +492,6 @@ jobs:
               pwd
               ls
               echo " --------------- END ------------------"
-              mkdir -p /roles/deploy/files
-              mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
               # How to do the next steps right
               # Sign up to a vault service from a company specialized for it like CyberArk so you hopefully don't need to rotate passwords too often
               # Configure at least cert based authentication and best case other multiple factors if available like IP whitelisting
