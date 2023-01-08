@@ -475,7 +475,6 @@ jobs:
               echo " ---------"
               ls -l
               echo " --------------- END ------------------"
-              cd backend
               tar -C backend -czvf artifact.tar.gz .
               mkdir -p /root/project/.circleci/ansible/roles/deploy/files
               mv artifact.tar.gz /root/project/.circleci/ansible/roles/deploy/files/artifact.tar.gz
