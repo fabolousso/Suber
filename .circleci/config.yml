@@ -443,6 +443,10 @@ jobs:
       - run:
             name: Install dependencies
             command: |  
+              echo " --------- Echoing path and contents of the current directory ----------"
+              pwd
+              ls
+              echo " --------------- END ------------------"
               apk add --update ansible curl rsync openssh nodejs npm           
               apk add --update ansible
               apk add --update curl
@@ -461,13 +465,15 @@ jobs:
               # Zip the directory
               tar -C backend -czvf artifact.tar.gz .
               cd .circleci/ansible
-              echo " --------- Showing inventory ----------"
+              echo " --------- Echoing inventory ----------"
               IPS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text) 
               echo "$IPS" >> inventory.txt
-              cat inventory.txt
+              echo " --------------- END ------------------"
               #
-              echo " --------- showing contents of the root directory ----------"
+              echo " --------- Echoing path and contents of the current directory ----------"
+              pwd
               ls
+              echo " --------------- END ------------------"
               mkdir /roles/deploy/files
               mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
               # How to do the next steps right
@@ -643,7 +649,7 @@ workflows:
           filters:
             branches:
               ignore: [dev]
-      - cleanup
+      #- cleanup
       - notifyfordev:
           filters:
             branches:
