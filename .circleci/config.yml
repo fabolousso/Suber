@@ -445,7 +445,7 @@ jobs:
             command: |  
               echo " --------- Echoing path and contents of the current directory ----------"
               pwd
-              echo " ---------""
+              echo " ---------"
               ls -l
               echo " --------------- END ------------------"
               echo "\n"
@@ -461,7 +461,7 @@ jobs:
               # nvm install npm
               echo " --------- Echoing path and contents of the current directory ----------"
               pwd
-              echo " ---------""
+              echo " ---------"
               ls -l
               echo " --------------- END ------------------"
               cd backend
@@ -472,7 +472,7 @@ jobs:
               echo "Before zipping, next line pwd"
               echo " --------- Echoing path and contents of the current directory ----------"
               pwd
-              echo " ---------""
+              echo " ---------"
               ls -l
               echo " --------------- END ------------------"
               cd backend
