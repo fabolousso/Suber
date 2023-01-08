@@ -499,7 +499,7 @@ jobs:
               export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output=text)
               export API_URL="http://${BACKEND_IP}:3030"
               echo "api url -> ${API_URL}/api/status"
-              if curl --retry 20 --retry-connrefused "${API_URL}/api/status" | grep "ok"
+              if curl --retry 5 --retry-connrefused "${API_URL}/api/status" | grep "ok"
               then
                   return 0
               else
