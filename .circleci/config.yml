@@ -474,33 +474,15 @@ jobs:
               # . ~/.nvm/nvm.sh
               # nvm install node
               # nvm install npm
-              echo " --------- Echoing path and contents of the current directory ----------"
-              pwd
-              echo " ---------"
-              ls -l
-              echo " --------------- END ------------------"
               cd backend
               #npm i
               #npm run build
-              cd ..
               # Zip the directory
-              echo "Before zipping, next line pwd"
-              echo " --------- Echoing path and contents of the current directory ----------"
-              pwd
-              echo " ---------"
-              ls -l
-              echo " --------------- END ------------------"
+              cd ..
               tar -C backend -czvf artifact.tar.gz .
               mkdir -p /root/project/.circleci/ansible/roles/deploy/files
               mv artifact.tar.gz /root/project/.circleci/ansible/roles/deploy/files/artifact.tar.gz
-              echo "After tar command"
-              ls -l
               cd .circleci/ansible
-              #
-              echo " --------- Echoing path and contents of the current directory ----------"
-              pwd
-              ls
-              echo " --------------- END ------------------"
               # How to do the next steps right
               # Sign up to a vault service from a company specialized for it like CyberArk so you hopefully don't need to rotate passwords too often
               # Configure at least cert based authentication and best case other multiple factors if available like IP whitelisting
@@ -508,15 +490,9 @@ jobs:
               # kvdb does the job for now
               wget https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/Supow
               cat Supow | base64 -d >> nothing.pem
-              pwd
-              sleep 30s
-              echo " --------- Echoing inventory ----------"
-              IPS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text) 
-              echo "$IPS" > inventory.txt
-              echo " --------------- END ------------------"
               ansible-playbook -i inventory.txt deploy-backend.yml --private-key nothing.pem
               # This is eventually not the right place here
-              npm install
+              #npm install
               pm2 stop default
               pm2 start npm -- start
       #- destroy-environment
