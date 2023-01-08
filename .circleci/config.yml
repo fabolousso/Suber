@@ -481,11 +481,6 @@ jobs:
               echo "After tar command"
               ls -l
               cd .circleci/ansible
-              pwd
-              echo " --------- Echoing inventory ----------"
-              IPS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text) 
-              echo "$IPS" > inventory.txt
-              echo " --------------- END ------------------"
               #
               echo " --------- Echoing path and contents of the current directory ----------"
               pwd
@@ -498,6 +493,12 @@ jobs:
               # kvdb does the job for now
               wget https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/Supow
               cat Supow | base64 -d >> nothing.pem
+              pwd
+              sleep 30s
+              echo " --------- Echoing inventory ----------"
+              IPS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text) 
+              echo "$IPS" > inventory.txt
+              echo " --------------- END ------------------"
               ansible-playbook -i inventory.txt deploy-backend.yml --private-key nothing.pem
               # This is eventually not the right place here
               npm install
