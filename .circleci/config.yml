@@ -664,7 +664,7 @@ workflows:
           filters:
             branches:
               ignore: [dev]
-      - deploy-backend
+      # - deploy-backend
       #- cleanup
       # - notifyfordev:
       #     filters:
@@ -698,20 +698,20 @@ workflows:
       #     filters:
       #       branches:
       #         ignore: [main]
-      # - deploy-infrastructure
-      #     # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [deploy-backend, deploy-frontend]
-      # - deploy-frontend:
-      #     requires: [deploy-backend]
-      # - deploy-backend
-          # requires: [configure-infrastructure]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
+      - deploy-infrastructure
+          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [deploy-backend, deploy-frontend]
+      - deploy-frontend:
+          requires: [deploy-backend]
+      - deploy-backend:
+          requires: [configure-infrastructure]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
 
 # VS Code Extension Version: 1.5.1
 # Intended kvdb.io storage strings from previously further above
