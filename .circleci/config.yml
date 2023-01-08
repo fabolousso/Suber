@@ -463,10 +463,13 @@ jobs:
               #npm run build
               cd ..
               # Zip the directory
+              echo "Before zipping, next line pwd"
               pwd
               tar -C backend -czvf artifact.tar.gz .
+              echo "After tar command"
               ls -l
               cd .circleci/ansible
+              pwd
               echo " --------- Echoing inventory ----------"
               IPS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text) 
               echo "$IPS" > inventory.txt
