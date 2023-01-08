@@ -600,6 +600,41 @@ jobs:
                 fi
             done
             echo "----------------------------------------------------------------"
+      - run:
+          name: Delete buckets
+          command: |
+            #! /bin/bash
+            current=${CIRCLE_WORKFLOW_ID:0:7}
+            echo "----------------------------------------------------------------"
+            echo "-------------------------BUCKET LIST----------------------------"
+            aws s3 ls --output table|awk {' print $3'} > bucketlist.txt
+            cat bucketlist.txt
+            echo "----------------------------------------------------------------"
+            printf "\n"
+            echo "----------------------------------------------------------------"
+            echo "-------------------------ACTIONS--------------------------------"
+            for val in $(cat bucketlist.txt)
+            do
+                delflag="yes"
+                #Check if it is current bucket
+                if [ $val == "udapeople-$current" ]; then  
+                    delflag="no"
+                fi
+
+                #Check if it does not contain udapeople
+                if [ $val != *"udapeople"* ]; then
+                    delflag="no"
+                fi
+
+                if [ $delflag == "yes" ]; then
+                    echo "delete;$val"
+                    #Delete bucket
+                    aws s3 rm --recursive "s3://udapeople-$current"
+                else
+                    echo "keep;$val"
+                fi
+            done
+            echo "----------------------------------------------------------------"
                         
 workflows:
   default:
