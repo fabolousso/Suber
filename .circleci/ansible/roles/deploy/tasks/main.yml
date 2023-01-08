@@ -10,6 +10,7 @@
     name: ["nodejs", "npm"]
     state: latest
     update_cache: yes
+
 - name: "install pm2"
   become: true
   npm:
@@ -17,3 +18,40 @@
     global: yes
     production: yes
     state: present
+
+- name: "install unzip"
+  ansible.builtin.yum:
+    name:
+      - unzip
+      - tar
+    state: present
+  become: true
+    
+- name: Creates Hosting Directory
+  file:
+    path: ~/web
+    state: directory
+    mode: '0755'
+
+- name: Extract Artifact contents
+  ansible.builtin.unarchive:
+    src: ./artifact.tar.gz
+    dest: ~/web
+
+- name: Executing node
+  shell: |
+    cd ~/web/dist/
+    echo "
+    TYPEORM_CONNECTION={{ lookup('env', 'TYPEORM_CONNECTION')}}
+    TYPEORM_ENTITIES=./modules/domain/**/*.entity.js
+    TYPEORM_HOST={{ lookup('env', 'TYPEORM_HOST')}}
+    TYPEORM_PORT=5432
+    TYPEORM_USERNAME={{ lookup('env', 'TYPEORM_USERNAME')}}
+    TYPEORM_PASSWORD={{ lookup('env', 'TYPEORM_PASSWORD')}}
+    TYPEORM_DATABASE={{ lookup('env', 'TYPEORM_DATABASE')}}
+    TYPEORM_MIGRATIONS=./migrations/*.js
+    TYPEORM_MIGRATIONS_DIR=./migrations
+    " >> .env
+    pm2 start -f main.js
+
+# VS Code Extension Version: 1.5.1

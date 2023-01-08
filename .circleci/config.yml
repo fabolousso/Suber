@@ -442,7 +442,8 @@ jobs:
             fingerprints: ["b0:dc:47:24:b2:13:0d:85:32:1f:f6:48:70:89:8c:60"]
       - run:
             name: Install dependencies
-            command: |             
+            command: |  
+              apk add --update ansible curl rsync openssh nodejs npm           
               apk add --update ansible
               apk add --update curl
               apk add --no-cache aws-cli
@@ -452,32 +453,33 @@ jobs:
               # . ~/.nvm/nvm.sh
               # nvm install node
               # nvm install npm
+              ls -l
+              cd backend
+              #npm i
+              #npm run build
               cd ..
-      - run:
-          name: Deploy backend
-          command: |
-            # your code here - do it
-            cd backend
-            #npm i
-            #npm run build
-            cd ..
-            # Zip the directory
-            tar -C backend -czvf artifact.tar.gz .
-            cd .circleci/ansible
-            echo "Contents  of the inventory.txt file is -------"
-            cat inventory.txt
-            # How to do the next steps right
-            # Sign up to a vault service from a company specialized for it like CyberArk so you hopefully don't need to rotate passwords too often
-            # Configure at least cert based authentication and best case other multiple factors if available like IP whitelisting
-            # Read the secret from the service at runtime
-            # kvdb does the job for now
-            wget https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/Supow
-            cat Supow | base64 -d >> nothing.pem
-            ansible-playbook -i inventory.txt deploy-backend.yml --private-key nothing.pem
-            # This is eventually not the right place here
-            #npm install
-            #pm2 stop default
-            #pm2 start npm -- start  
+              # Zip the directory
+              tar -C backend -czvf artifact.tar.gz .
+              cd .circleci/ansible
+              echo "Contents of the inventory.txt file is -------"
+              cat inventory.txt
+              #
+              echo " --------- showing contents of the root directory ----------"
+              ls
+              mkdir .circleci/ansible/roles/deploy/files
+              mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
+              # How to do the next steps right
+              # Sign up to a vault service from a company specialized for it like CyberArk so you hopefully don't need to rotate passwords too often
+              # Configure at least cert based authentication and best case other multiple factors if available like IP whitelisting
+              # Read the secret from the service at runtime
+              # kvdb does the job for now
+              wget https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/Supow
+              cat Supow | base64 -d >> nothing.pem
+              ansible-playbook -i inventory.txt deploy-backend.yml --private-key nothing.pem
+              # This is eventually not the right place here
+              #npm install
+              #pm2 stop default
+              #pm2 start npm -- start  
       - destroy-environment
 
   smoke-test:
@@ -499,7 +501,7 @@ jobs:
               export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output=text)
               export API_URL="http://${BACKEND_IP}:3030"
               echo "api url -> ${API_URL}/api/status"
-              if curl --retry 20 --retry-connrefused "${API_URL}/api/status" | grep "ok"
+              if curl --retry 5 --retry-connrefused "${API_URL}/api/status" | grep "ok"
               then
                   return 0
               else
