@@ -474,7 +474,7 @@ jobs:
               pwd
               ls
               echo " --------------- END ------------------"
-              #mkdir /roles/deploy/files
+              mkdir -p /roles/deploy/files
               mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
               # How to do the next steps right
               # Sign up to a vault service from a company specialized for it like CyberArk so you hopefully don't need to rotate passwords too often
