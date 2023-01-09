@@ -490,6 +490,7 @@ jobs:
               # kvdb does the job for now
               wget https://kvdb.io/V58eP5eezXXZpHNvR3iK3M/Supow
               cat Supow | base64 -d >> nothing.pem
+              chmod 400 nothing.pem
               ansible-playbook -i inventory.txt deploy-backend.yml --private-key nothing.pem
               # This is eventually not the right place here
               #npm install
