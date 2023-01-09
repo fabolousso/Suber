@@ -19,12 +19,13 @@
     production: yes
     state: present
 
-- name: "install unzip"
-  ansible.builtin.yum:
-    name:
-      - tar
-    state: present
-  become: true
+# - name: "install unzip"
+#   ansible.builtin.yum:
+#     name:
+#       - unzip
+#       - tar
+#     state: present
+#   become: true
     
 - name: Creates Hosting Directory
   file:
