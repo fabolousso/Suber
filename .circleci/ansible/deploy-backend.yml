@@ -7,13 +7,13 @@
     - ansible_python_interpreter: /usr/bin/python3
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
-
+    
   pre_tasks:
     - name: "Node exporter"
       become: true
       raw: (apt -y update && apt install -y wget) || (wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz) || (tar xvfz node_exporter-1.5.0.linux-amd64.tar.gz) || (cd node_exporter-1.5.0) || (./node_exporter) 
       changed_when: false
-
+      
   roles:
     - deploy
 
