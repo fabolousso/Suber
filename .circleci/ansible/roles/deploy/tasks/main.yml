@@ -22,7 +22,6 @@
 - name: "install unzip"
   ansible.builtin.yum:
     name:
-      - unzip
       - tar
     state: present
   become: true
